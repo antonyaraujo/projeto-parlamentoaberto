@@ -31,8 +31,8 @@ interface Projeto {
 export default function Pesquisar() {
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [projectData, setProjectData] = useState<any[]>([]);
-  const [type, setType] = useState('id');
-  const [valorPesquisa, setValorPesquisa] = useState('');
+  const [type, setType] = useState<string>('id');
+  const [valorPesquisa, setValorPesquisa] = useState<string>();
 
   useEffect(() => {
     api
@@ -48,12 +48,13 @@ export default function Pesquisar() {
     setCurrentData(projectData);
   }, [projectData]);
 
-  function filter(busca: string) {
+  function filter(busca: any) {
     const resultado: Projeto[] = [];
-    const map = projectData.map((projeto: Projeto) => {
+    const map = projectData.map((projeto: any) => {
       if (`${projeto[type]}`.includes(busca)) {
-        resultado.push(projeto);
+        return resultado.push(projeto);
       }
+      return resultado;
     });
 
     if (resultado.length !== 0) {
@@ -87,7 +88,7 @@ export default function Pesquisar() {
             placeholder="Select option"
             width="15%"
             value={type}
-            onChange={(event) => setType(event.target.value)}
+            onChange={(event: any) => setType(event.target.value)}
           >
             <option value="idProposicao">ID</option>
             <option value="autores">Autor</option>
