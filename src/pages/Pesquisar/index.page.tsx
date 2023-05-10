@@ -6,11 +6,9 @@ import {
   Flex,
   Button,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
-  Tfoot,
   Th,
   Thead,
   Tr,
@@ -38,10 +36,7 @@ export default function Pesquisar() {
     api
       .get('')
       .then((response) => setProjectData(response.data.plan1))
-      .then((response) => console.log(response))
-      .catch((err) => {
-        console.error(`ops! ocorreu um erro${err}`);
-      });
+      .catch((err) => setProjectData([err]));
   }, []);
 
   useEffect(() => {
@@ -50,7 +45,7 @@ export default function Pesquisar() {
 
   function filter(busca: any) {
     const resultado: Projeto[] = [];
-    const map = projectData.map((projeto: any) => {
+    projectData.map((projeto: any) => {
       if (`${projeto[type]}`.includes(busca)) {
         return resultado.push(projeto);
       }
@@ -60,10 +55,9 @@ export default function Pesquisar() {
     if (resultado.length !== 0) {
       setCurrentData(resultado);
     }
-    console.log(resultado);
   }
   return (
-    <>
+    <Box>
       <Box width="100%" bg="black" top="0" left="0" position="relative">
         <InsideContainer>
           <Flex
@@ -139,6 +133,6 @@ export default function Pesquisar() {
           </TableContainer>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 }

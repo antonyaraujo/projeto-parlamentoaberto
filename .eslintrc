@@ -12,9 +12,10 @@
     ],
     "rules": {
       "semi": 0,
-      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts"] }],
       "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
+      "@typescript-eslint/no-explicit-any": "off",
       "prettier/prettier": [
         "error", {
           "semi": false
