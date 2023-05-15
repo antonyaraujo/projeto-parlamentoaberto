@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL:
-    'https://api.sheety.co/a012ef1bf2a0ba7f75fabc5dd7989da5/parlamentoAberto/plan1',
+    'https://script.google.com/macros/s/AKfycbwQJQndq-kYDuYbbpkuS9FP_-hkn07GcwH_kPoazaNq9jPLLCWqqRGKr63zp-rfHYA/exec',
   withCredentials: false,
   method: 'get',
   headers: {
