@@ -31,6 +31,11 @@ export const ButtonSearch = chakra(Button, {
     backgroundColor: 'black',
     color: 'white',
     border: '2px solid black',
+    _hover: {
+      backgroundColor: 'white',
+      color: 'black',
+      border: '2px solid black',
+    },
   },
 });
 
