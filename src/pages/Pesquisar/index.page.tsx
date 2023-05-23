@@ -5,7 +5,6 @@ import {
   Input,
   Flex,
   Button,
-  Table,
   TableContainer,
   Tbody,
   Td,
@@ -26,6 +25,7 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Table,
 } from '@chakra-ui/react';
 import { AddIcon, WarningIcon } from '@chakra-ui/icons';
 import api from '../../services/api';
@@ -50,6 +50,9 @@ export default function Pesquisar() {
   const [projectData, setProjectData] = useState<any[]>([]);
   const [type, setType] = useState<string>('id');
   const [valorPesquisa, setValorPesquisa] = useState<string>('');
+  const [slicedData, setSlicedData] = useState<any[]>([]);
+  let inicio = 0;
+  let fim = 9;
 
   // Modals controllers
   const {
@@ -74,6 +77,7 @@ export default function Pesquisar() {
 
   useEffect(() => {
     setCurrentData(projectData);
+    setSlicedData(currentData.slice(inicio, fim));
     console.log(projectData);
   }, [projectData]);
 
@@ -117,6 +121,18 @@ export default function Pesquisar() {
   function showAuthors(project: any) {
     setCurrentProject(project);
     onOpenAutores();
+  }
+
+  function proximo() {
+    inicio = fim;
+    fim += 10;
+    setSlicedData(currentData.slice(inicio, fim));
+  }
+
+  function voltar() {
+    fim = inicio;
+    inicio = fim - 10;
+    setSlicedData(currentData.slice(inicio, fim));
   }
 
   return (
@@ -174,7 +190,11 @@ export default function Pesquisar() {
         </InsideContainer>
       </Box>
       <Box width="100%" mt="48px">
-        <InsideContainer justifyContent="center" alignContent="center">
+        <InsideContainer
+          maxWidth="70%"
+          justifyContent="center"
+          alignContent="center"
+        >
           <Content flexDir="column">
             <Box textAlign="left" w="100%" alignItems="left">
               <Text>Realize a busca do seu projeto</Text>
@@ -220,100 +240,104 @@ export default function Pesquisar() {
                 </form>
               </CardBody>
             </Card>
-            <Box>
-              <TableContainer mt="24px">
-                <Table variant="simple">
-                  <Thead>
-                    <Tr>
-                      <Th>ID</Th>
-                      <Th>Ano</Th>
-                      <Th>Tipo</Th>
-                      <Th>Numero</Th>
-                      <Th>Assunto</Th>
-                      <Th>Autores</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {currentData ? (
-                      currentData.map((projeto) => (
-                        <Tr key={projeto?.id}>
-                          <Td>{projeto?.id}</Td>
-                          <Td>{projeto?.ano}</Td>
-                          <Td>{projeto?.tipo}</Td>
-                          <Td>{projeto?.numero}</Td>
-                          <Td gap="5px">
-                            <Box
-                              maxWidth={{ sm: '100px', md: '400px' }}
-                              overflow="hidden"
-                            >
-                              {projeto?.assunto}
-                            </Box>
-                            <ButtonSearch
-                              size="sm"
-                              width="30px"
-                              onClick={() => showSubject(projeto)}
-                            >
-                              <AddIcon />
-                            </ButtonSearch>
-                          </Td>
-                          <Td gap="5px">
-                            <Box
-                              maxWidth={{ sm: '100px', md: '200px' }}
-                              overflow="hidden"
-                            >
-                              {projeto?.autores}
-                            </Box>
-                            <ButtonSearch
-                              size="sm"
-                              width="30px"
-                              onClick={() => showAuthors(projeto)}
-                            >
-                              <AddIcon />
-                            </ButtonSearch>
-                          </Td>
-                        </Tr>
-                      ))
-                    ) : (
-                      <Tr key="0">
-                        <Td>
-                          <SkeletonText
-                            noOfLines={1}
-                            spacing="4"
-                            skeletonHeight="2"
-                            isLoaded={currentData}
-                          />
+            <TableContainer mt="24px">
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th>ID</Th>
+                    <Th>Ano</Th>
+                    <Th>Tipo</Th>
+                    <Th>Numero</Th>
+                    <Th>Assunto</Th>
+                    <Th>Autores</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {slicedData ? (
+                    slicedData.map((projeto) => (
+                      <Tr key={projeto?.id}>
+                        <Td>{projeto?.id}</Td>
+                        <Td>{projeto?.ano}</Td>
+                        <Td>{projeto?.tipo}</Td>
+                        <Td>{projeto?.numero}</Td>
+                        <Td gap="5px">
+                          <Box
+                            maxWidth={{ sm: '100px', md: '400px' }}
+                            overflow="hidden"
+                          >
+                            {projeto?.assunto}
+                          </Box>
+                          <ButtonSearch
+                            size="sm"
+                            width="30px"
+                            onClick={() => showSubject(projeto)}
+                          >
+                            <AddIcon />
+                          </ButtonSearch>
                         </Td>
-                        <Td>
-                          <SkeletonText
-                            noOfLines={1}
-                            spacing="4"
-                            skeletonHeight="2"
-                            isLoaded={currentData}
-                          />
-                        </Td>
-                        <Td>
-                          <SkeletonText
-                            noOfLines={1}
-                            spacing="10"
-                            skeletonHeight="2"
-                          />
-                        </Td>
-                        <Td>
-                          <SkeletonText
-                            noOfLines={1}
-                            spacing="10"
-                            skeletonHeight="2"
-                          />
-                        </Td>
-                        <Td>
-                          <Skeleton height="20px" w="20px" />
+                        <Td gap="5px">
+                          <Box
+                            maxWidth={{ sm: '100px', md: '200px' }}
+                            overflow="hidden"
+                          >
+                            {projeto?.autores}
+                          </Box>
+                          <ButtonSearch
+                            size="sm"
+                            width="30px"
+                            onClick={() => showAuthors(projeto)}
+                          >
+                            <AddIcon />
+                          </ButtonSearch>
                         </Td>
                       </Tr>
-                    )}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Box>
+                    ))
+                  ) : (
+                    <Tr key="0">
+                      <Td>
+                        <SkeletonText
+                          noOfLines={1}
+                          spacing="4"
+                          skeletonHeight="2"
+                        />
+                      </Td>
+                      <Td>
+                        <SkeletonText
+                          noOfLines={1}
+                          spacing="4"
+                          skeletonHeight="2"
+                        />
+                      </Td>
+                      <Td>
+                        <SkeletonText
+                          noOfLines={1}
+                          spacing="10"
+                          skeletonHeight="2"
+                        />
+                      </Td>
+                      <Td>
+                        <SkeletonText
+                          noOfLines={1}
+                          spacing="10"
+                          skeletonHeight="2"
+                        />
+                      </Td>
+                      <Td>
+                        <Skeleton height="20px" w="20px" />
+                      </Td>
+                    </Tr>
+                  )}
+                </Tbody>
+              </Table>
+              <Box width="70%" alignItems="center">
+                <ButtonSearch type="button" onClick={() => voltar()}>
+                  Anterior
+                </ButtonSearch>
+                <ButtonSearch type="button" onClick={() => proximo()}>
+                  Proximo
+                </ButtonSearch>
+              </Box>
+            </TableContainer>
           </Content>
         </InsideContainer>
       </Box>
