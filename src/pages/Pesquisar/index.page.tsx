@@ -71,13 +71,14 @@ export default function Pesquisar() {
     api
       .get('', { params: { tipo: '', valor: '' } })
       .then((response) => setProjectData(response.data))
+      .then((response) => setSlicedData(projectData.slice(inicio, fim)))
       .then((response) => console.log(response))
       .catch((err) => setProjectData([err]));
   }, []);
 
   useEffect(() => {
     setCurrentData(projectData);
-    setSlicedData(currentData.slice(inicio, fim));
+    setSlicedData(projectData.slice(inicio, fim));
     console.log(projectData);
   }, [projectData]);
 
@@ -124,15 +125,15 @@ export default function Pesquisar() {
   }
 
   function proximo() {
-    inicio = fim;
+    inicio += 10;
     fim += 10;
-    setSlicedData(currentData.slice(inicio, fim));
+    setSlicedData(projectData.slice(inicio, fim));
   }
 
   function voltar() {
-    fim = inicio;
-    inicio = fim - 10;
-    setSlicedData(currentData.slice(inicio, fim));
+    fim -= 10;
+    inicio -= 10;
+    setSlicedData(projectData.slice(inicio, fim));
   }
 
   return (
@@ -329,7 +330,7 @@ export default function Pesquisar() {
                   )}
                 </Tbody>
               </Table>
-              <Box width="70%" alignItems="center">
+              <Box width="70%" alignItems="center" gap="48px">
                 <ButtonSearch type="button" onClick={() => voltar()}>
                   Anterior
                 </ButtonSearch>
