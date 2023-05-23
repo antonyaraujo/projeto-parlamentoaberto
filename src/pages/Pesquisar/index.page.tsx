@@ -18,7 +18,16 @@ import {
   CardBody,
   Skeleton,
   SkeletonText,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react';
+import { AddIcon, WarningIcon } from '@chakra-ui/icons';
 import api from '../../services/api';
 import {
   ButtonSearch,
@@ -40,12 +49,26 @@ export default function Pesquisar() {
   const [currentData, setCurrentData] = useState<any[]>([]);
   const [projectData, setProjectData] = useState<any[]>([]);
   const [type, setType] = useState<string>('id');
-  const [valorPesquisa, setValorPesquisa] = useState<string>();
+  const [valorPesquisa, setValorPesquisa] = useState<string>('');
+
+  // Modals controllers
+  const {
+    isOpen: isOpenSubject,
+    onOpen: onOpenSubject,
+    onClose: onCloseSubject,
+  } = useDisclosure(); // Detalhes do Projeto
+  const {
+    isOpen: isOpenAutores,
+    onOpen: onOpenAutores,
+    onClose: onCloseAutores,
+  } = useDisclosure(); // Autores do Projeto
+  const [currentProject, setCurrentProject] = useState<any>({ assunto: '' });
 
   useEffect(() => {
     api
-      .get('', { params: { tipo: 'assunto', valor: '' } })
+      .get('', { params: { tipo: '', valor: '' } })
       .then((response) => setProjectData(response.data))
+      .then((response) => console.log(response))
       .catch((err) => setProjectData([err]));
   }, []);
 
@@ -68,29 +91,77 @@ export default function Pesquisar() {
     }
   }
 
-  const handleChangeValue = (event: {
-    target: { value: SetStateAction<string | undefined> };
-  }) => {
+  const handleChangeValue = (event: { target: { value: string } }) => {
     setValorPesquisa(event.target.value);
   };
 
-  const handleChangeTipo = (event: {
-    target: { value: SetStateAction<string | undefined> };
-  }) => {
-    setType(event.target.value);
+  const handleChangeTipo = (event: { target: { value: string } }) => {
+    setType(event?.target?.value);
   };
 
   function handleSubmit() {
-    useEffect(() => {
-      api
-        .get('', { params: { tipo: type, valor: valorPesquisa } })
-        .then((response) => setProjectData(response.data))
-        .catch((err) => console.log(err));
-    }, []);
+    console.log(type);
+    console.log(valorPesquisa);
+    api
+      .get('', { params: { tipo: type, valor: valorPesquisa } })
+      .then((response) => setProjectData(response.data))
+      .then((response) => console.log(response))
+      .catch((err) => console.log(err));
+  }
+
+  function showSubject(project: any) {
+    setCurrentProject(project);
+    onOpenSubject();
+  }
+
+  function showAuthors(project: any) {
+    setCurrentProject(project);
+    onOpenAutores();
   }
 
   return (
     <Box>
+      <Modal onClose={onCloseSubject} size="xl" isOpen={isOpenSubject}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            Detalhes do Projeto {currentProject?.numero} de{' '}
+            {currentProject?.ano}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>{currentProject?.assunto}</ModalBody>
+          <ModalFooter>
+            <Button onClick={onCloseSubject}>Fechar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal onClose={onCloseAutores} size="xl" isOpen={isOpenAutores}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            Autores do Projeto {currentProject?.numero} de {currentProject?.ano}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ol style={{ marginLeft: '25px' }}>
+              {currentProject.autores &&
+                currentProject?.autores?.map((autor: any) => (
+                  <li
+                    key={autor}
+                    style={{
+                      fontWeight: autor.includes(valorPesquisa) ? 600 : 0,
+                    }}
+                  >
+                    {autor}
+                  </li>
+                ))}
+            </ol>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onCloseAutores}>Fechar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Box width="100%" bg="black" top="0" left="0" position="relative">
         <InsideContainer>
           <Content>
@@ -110,16 +181,16 @@ export default function Pesquisar() {
             </Box>
             <Card bgColor="#E6E6E6" w="100%">
               <CardBody minH="10%">
-                <form onSubmit={handleSubmit(event)}>
+                <form>
                   <SearchPanel gap="24px">
                     <Select
                       placeholder="Select option"
                       width="10%"
-                      minWidth="48px"
+                      minWidth="10%"
                       value={type}
                       variant="filled flushed"
                       border="2px solid black"
-                      onChange={handleChangeTipo}
+                      onChange={(e) => setType(e.target.value)}
                       name="tipo"
                     >
                       <option value="id">ID</option>
@@ -136,9 +207,13 @@ export default function Pesquisar() {
                       variant="filled flushed"
                       border="2px solid black"
                       value={valorPesquisa}
-                      onChange={handleChangeValue}
+                      onChange={(e) => setValorPesquisa(e.target.value)}
                     />
-                    <ButtonSearch colorScheme="black" type="submit">
+                    <ButtonSearch
+                      colorScheme="black"
+                      type="button"
+                      onClick={() => handleSubmit()}
+                    >
                       Pesquisar
                     </ButtonSearch>
                   </SearchPanel>
@@ -166,17 +241,35 @@ export default function Pesquisar() {
                           <Td>{projeto?.ano}</Td>
                           <Td>{projeto?.tipo}</Td>
                           <Td>{projeto?.numero}</Td>
-                          <Td
-                            maxWidth={{ sm: '100px', md: '400px' }}
-                            overflow="hidden"
-                          >
-                            {projeto?.assunto}
+                          <Td gap="5px">
+                            <Box
+                              maxWidth={{ sm: '100px', md: '400px' }}
+                              overflow="hidden"
+                            >
+                              {projeto?.assunto}
+                            </Box>
+                            <ButtonSearch
+                              size="sm"
+                              width="30px"
+                              onClick={() => showSubject(projeto)}
+                            >
+                              <AddIcon />
+                            </ButtonSearch>
                           </Td>
-                          <Td
-                            maxWidth={{ sm: '100px', md: '300px' }}
-                            overflow="hidden"
-                          >
-                            {projeto?.autores}
+                          <Td gap="5px">
+                            <Box
+                              maxWidth={{ sm: '100px', md: '200px' }}
+                              overflow="hidden"
+                            >
+                              {projeto?.autores}
+                            </Box>
+                            <ButtonSearch
+                              size="sm"
+                              width="30px"
+                              onClick={() => showAuthors(projeto)}
+                            >
+                              <AddIcon />
+                            </ButtonSearch>
                           </Td>
                         </Tr>
                       ))
