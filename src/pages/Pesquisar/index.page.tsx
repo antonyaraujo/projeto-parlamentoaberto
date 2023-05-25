@@ -186,7 +186,6 @@ export default function Pesquisar() {
               <Image src="assets/logobranca.png" />
             </Box>
             <MenuOption>Pesquisar</MenuOption>
-            <MenuOption>Gráficos</MenuOption>
           </Content>
         </InsideContainer>
       </Box>
@@ -261,35 +260,45 @@ export default function Pesquisar() {
                         <Td>{projeto?.ano}</Td>
                         <Td>{projeto?.tipo}</Td>
                         <Td>{projeto?.numero}</Td>
-                        <Td gap="5px">
-                          <Box
-                            maxWidth={{ sm: '100px', md: '400px' }}
-                            overflow="hidden"
+                        <Td>
+                          <Flex
+                            alignItems="center"
+                            justifyContent="space-between"
                           >
-                            {projeto?.assunto}
-                          </Box>
-                          <ButtonSearch
-                            size="sm"
-                            width="30px"
-                            onClick={() => showSubject(projeto)}
-                          >
-                            <AddIcon />
-                          </ButtonSearch>
+                            <Box
+                              maxWidth={{ sm: '100px', md: '400px' }}
+                              overflow="hidden"
+                            >
+                              {projeto?.assunto}
+                            </Box>
+                            <ButtonSearch
+                              size="sm"
+                              width="30px"
+                              onClick={() => showSubject(projeto)}
+                            >
+                              <AddIcon />
+                            </ButtonSearch>
+                          </Flex>
                         </Td>
                         <Td gap="5px">
-                          <Box
-                            maxWidth={{ sm: '100px', md: '200px' }}
-                            overflow="hidden"
+                          <Flex
+                            alignItems="center"
+                            justifyContent="space-between"
                           >
-                            {projeto?.autores}
-                          </Box>
-                          <ButtonSearch
-                            size="sm"
-                            width="30px"
-                            onClick={() => showAuthors(projeto)}
-                          >
-                            <AddIcon />
-                          </ButtonSearch>
+                            <Box
+                              maxWidth={{ sm: '100px', md: '200px' }}
+                              overflow="hidden"
+                            >
+                              {projeto?.autores}
+                            </Box>
+                            <ButtonSearch
+                              size="sm"
+                              width="30px"
+                              onClick={() => showAuthors(projeto)}
+                            >
+                              <AddIcon />
+                            </ButtonSearch>
+                          </Flex>
                         </Td>
                       </Tr>
                     ))
