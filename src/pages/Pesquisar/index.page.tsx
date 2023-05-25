@@ -185,7 +185,6 @@ export default function Pesquisar() {
             <Box maxW="30%">
               <Image src="assets/logobranca.png" />
             </Box>
-            <MenuOption>Pesquisar</MenuOption>
           </Content>
         </InsideContainer>
       </Box>
